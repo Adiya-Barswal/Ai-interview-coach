@@ -6,29 +6,25 @@ async function authUser(req, res, next) {
   try {
     const token = req.cookies.token;
 
-    // Token hai ya nahi
     if (!token) {
       return res.status(401).json({
-        message: "Unauthorized/token not provided",
+        message: "Unauthorized",
       });
     }
 
-    // Blacklist check
     const isBlacklisted = await BlacklistTokenModel.findOne({
       token,
     });
 
     if (isBlacklisted) {
       return res.status(401).json({
-        message: "Token has been blacklisted",
+        message: "Token is blacklisted",
       });
     }
 
-    // JWT verify
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // User find karo
-    const user = await UserModel.findById(decoded.id);
+    const user = await UserModel.findById(decoded.id).select("-password");
 
     if (!user) {
       return res.status(401).json({
@@ -36,7 +32,6 @@ async function authUser(req, res, next) {
       });
     }
 
-    // Request me user attach karo
     req.user = user;
 
     next();
@@ -44,9 +39,11 @@ async function authUser(req, res, next) {
     console.log(error);
 
     return res.status(401).json({
-      message: "Unauthorized",
+      message: "Invalid token",
     });
   }
 }
 
-module.exports = { authUser };
+module.exports = {
+  authUser,
+};

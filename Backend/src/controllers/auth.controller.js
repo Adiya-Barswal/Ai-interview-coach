@@ -1,34 +1,36 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+
 const UserModel = require("../models/user.model");
 const BlacklistTokenModel = require("../models/blacklist.model");
 
-// register controller
+// Register Controller
 async function registerUserController(req, res) {
   try {
     const { username, email, password } = req.body;
 
     if (!username || !email || !password) {
       return res.status(400).json({
-        message: "please provide username, email and password",
+        message: "Please provide username, email and password",
       });
     }
 
     const isUserAlreadyExists = await UserModel.findOne({
       $or: [{ username }, { email }],
     });
+
     if (isUserAlreadyExists) {
       return res.status(400).json({
-        message: "Account already exist with this email address or usernames",
+        message: "User already exists",
       });
     }
 
-    const hash = await bcrypt.hash(password, 10);
+    const hashPassword = await bcrypt.hash(password, 10);
 
     const user = await UserModel.create({
       username,
       email,
-      password: hash,
+      password: hashPassword,
     });
 
     const token = jwt.sign(
@@ -37,7 +39,9 @@ async function registerUserController(req, res) {
         username: user.username,
       },
       process.env.JWT_SECRET,
-      { expiresIn: "1d" },
+      {
+        expiresIn: "1d",
+      },
     );
 
     res.cookie("token", token);
@@ -59,15 +63,14 @@ async function registerUserController(req, res) {
   }
 }
 
-// login controller
-
+// Login Controller
 async function loginUserController(req, res) {
   try {
     const { email, password } = req.body;
 
     if (!email || !password) {
       return res.status(400).json({
-        message: "please provide email and password",
+        message: "Please provide email and password",
       });
     }
 
@@ -75,7 +78,7 @@ async function loginUserController(req, res) {
 
     if (!user) {
       return res.status(400).json({
-        message: "invalid email or password",
+        message: "Invalid email or password",
       });
     }
 
@@ -83,7 +86,7 @@ async function loginUserController(req, res) {
 
     if (!isPasswordValid) {
       return res.status(400).json({
-        message: "invalid email or password",
+        message: "Invalid email or password",
       });
     }
 
@@ -101,7 +104,7 @@ async function loginUserController(req, res) {
     res.cookie("token", token);
 
     return res.status(200).json({
-      message: " User login successfully",
+      message: "User login successfully",
       user: {
         id: user._id,
         username: user.username,
@@ -117,25 +120,21 @@ async function loginUserController(req, res) {
   }
 }
 
-// logout
-
+// Logout Controller
 async function logoutUserController(req, res) {
   try {
     const token = req.cookies.token;
 
-    // Token hai ya nahi check karo
     if (!token) {
       return res.status(400).json({
         message: "No token found",
       });
     }
 
-    // Token blacklist me save karo
     await BlacklistTokenModel.create({
       token,
     });
 
-    // Browser/Postman ki cookie delete karo
     res.clearCookie("token");
 
     return res.status(200).json({
@@ -150,26 +149,11 @@ async function logoutUserController(req, res) {
   }
 }
 
-//get me api
+// Get Me Controller
 async function getMeController(req, res) {
-  try {
-    const user = await UserModel.findById(req.user.id);
-    return res.status(200).json({
-      message: "User fetched successfully",
-      user: {
-        id: user._id,
-
-        username: user.username,
-        email: user.email,
-      },
-    });
-  } catch (error) {
-    console.log(error);
-
-    return res.status(500).json({
-      message: "Internal Server Error",
-    });
-  }
+  return res.status(200).json({
+    user: req.user,
+  });
 }
 
 module.exports = {

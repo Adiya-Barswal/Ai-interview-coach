@@ -7,7 +7,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 // require all the routes here
-const authRouter = require("./routes/auth.routes");
+const authRouter = require("./src/routes/auth.routes");
 
 // using all the routes here
 app.use("/api/auth", authRouter);

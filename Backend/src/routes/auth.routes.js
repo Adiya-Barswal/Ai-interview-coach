@@ -1,25 +1,23 @@
 const { Router } = require("express");
 
 const authController = require("../controllers/auth.controller");
-
-const authMiddlewere = require("../middlewares/auth.middleware");
+const authMiddleware = require("../middlewares/auth.middleware");
 
 const authRouter = Router();
 
-// Register api
+// Register
 authRouter.post("/register", authController.registerUserController);
 
-// Login api
+// Login
 authRouter.post("/login", authController.loginUserController);
 
-// logout api
+// Logout
 authRouter.get("/logout", authController.logoutUserController);
 
-// get me api
-
+// Protected Route (Get Me)
 authRouter.get(
   "/get-me",
-  authMiddlewere.authUser,
+  authMiddleware.authUser,
   authController.getMeController,
 );
 
