@@ -1,9 +1,27 @@
-import { useNavigate, Link } from "react-router-dom";
-const Login = () => {
-  const usenavigate = useNavigate();
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
 
-  const handleSubmit = (e) => {
+const Login = () => {
+  const { login, isLoading } = useAuth();
+  const navigate = useNavigate();
+
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const result = await login(formData);
+    if (result) {
+      navigate("/");
+    }
   };
 
   return (
@@ -22,6 +40,8 @@ const Login = () => {
               id="email"
               name="email"
               placeholder="Enter email address"
+              value={formData.email}
+              onChange={handleChange}
             />
           </div>
 
@@ -35,14 +55,17 @@ const Login = () => {
               id="password"
               name="password"
               placeholder="Enter password"
+              value={formData.password}
+              onChange={handleChange}
             />
           </div>
 
           <button
             type="submit"
-            className="border-none outline-none px-6 py-4 rounded-xl bg-[#e1034d] text-white cursor-pointer active:scale-95 transition-transform font-semibold"
+            disabled={isLoading}
+            className="border-none outline-none px-6 py-4 rounded-xl bg-[#e1034d] text-white cursor-pointer active:scale-95 transition-transform font-semibold disabled:opacity-50"
           >
-            Login
+            {isLoading ? "Loading..." : "Login"}
           </button>
 
           <p className="text-gray-400 text-sm">

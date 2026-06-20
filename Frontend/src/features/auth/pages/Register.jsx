@@ -1,11 +1,34 @@
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
 
 const Register = () => {
+  //hook
+  const { register, isLoading } = useAuth();
+
   const navigate = useNavigate();
-  const handleSubmit = (e) => {
-    e.preventDefault();
+
+  // form ka data ek jagah store karne ke liye
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    password: "",
+  });
+
+  // jab bhi koi input change ho — formData update karo
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // form submit hone pe register API call karo
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const result = await register(formData);
+    if (result) {
+      navigate("/");
+    }
+  };
   return (
     <main className="min-h-screen w-full flex justify-center items-center bg-[#0f0f0f]">
       <div className=" min-w-87.5  flex flex-col gap-4">
@@ -22,6 +45,8 @@ const Register = () => {
               id="username"
               name="username"
               placeholder="Enter username"
+              value={formData.username}
+              onChange={handleChange}
             />
           </div>
 
@@ -35,6 +60,8 @@ const Register = () => {
               id="email"
               name="email"
               placeholder="Enter email address"
+              value={formData.email}
+              onChange={handleChange}
             />
           </div>
 
@@ -48,14 +75,17 @@ const Register = () => {
               id="password"
               name="password"
               placeholder="Enter password"
+              value={formData.password}
+              onChange={handleChange}
             />
           </div>
 
           <button
             type="submit"
-            className="border-none outline-none px-6 py-4 rounded-xl bg-[#e1034d] text-white cursor-pointer active:scale-95 transition-transform font-semibold"
+            disabled={isLoading}
+            className="border-none outline-none px-6 py-4 rounded-xl bg-[#e1034d] text-white cursor-pointer active:scale-95 transition-transform font-semibold disabled:opacity-50"
           >
-            Register
+            {isLoading ? "Loading..." : "Register"}
           </button>
 
           <p className="text-gray-400 text-sm">
