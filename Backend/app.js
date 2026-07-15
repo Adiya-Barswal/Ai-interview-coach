@@ -13,6 +13,8 @@ app.use(
     origin: [
       "http://localhost:5173",
       "https://ai-interview-coach-eo5u7dc9g-adiya-barswals-projects.vercel.app",
+      "https://ai-interview-coach-g7sb2kl6o-adiya-barswals-projects.vercel.app", // ← Jo abhi error me dikh raha hai
+      /\.vercel\.app$/, // ← Yeh line saare vercel.app domains ko dynamic allow karegi (Permanent Fix!)
     ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
