@@ -20,6 +20,14 @@ const authRouter = require("./src/routes/auth.routes");
 
 const interviewRouter = require("./src/routes/interview.routes");
 
+// Root Route
+app.get("/", (req, res) => {
+  res.json({
+    success: true,
+    message: "AI Interview Coach Backend is running successfully 🚀",
+  });
+});
+
 // using all the routes here
 app.use("/api/auth", authRouter);
 app.use("/api/interview", interviewRouter);
