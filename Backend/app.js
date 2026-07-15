@@ -12,7 +12,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:5173",
-      "https://ai-interview-coach-coral-seven.vercel.app",
+      "https://ai-interview-coach-eo5u7dc9g-adiya-barswals-projects.vercel.app",
     ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
