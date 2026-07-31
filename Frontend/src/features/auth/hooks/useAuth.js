@@ -29,6 +29,9 @@ const useAuth = () => {
         email,
         password,
       });
+      if (!data) {
+        return false;
+      }
 
       dispatch(setUser(data.user));
       return true;

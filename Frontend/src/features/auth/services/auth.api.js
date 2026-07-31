@@ -7,6 +7,7 @@ const api = axios.create({
 });
 
 // Register API
+
 export async function registerUser({ username, email, password }) {
   try {
     const response = await api.post("/register", {
@@ -14,12 +15,15 @@ export async function registerUser({ username, email, password }) {
       email,
       password,
     });
+
     return response.data;
   } catch (err) {
-    console.log(err);
+    console.log("Register Error:", err.response?.data || err.message);
+    throw err;
   }
 }
 
+// Login API
 // Login API
 export async function loginUser({ email, password }) {
   try {
@@ -27,9 +31,11 @@ export async function loginUser({ email, password }) {
       email,
       password,
     });
+
     return response.data;
   } catch (err) {
-    console.log(err);
+    console.log("Login Error:", err.response?.data || err.message);
+    throw err;
   }
 }
 
